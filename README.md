@@ -1,7 +1,5 @@
 # Cloud AWS Project
 
-___
-
 ## First of all you need to install the aws CLI
 
 ![Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
