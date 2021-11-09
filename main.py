@@ -1,15 +1,33 @@
 import boto3
 import os
 from botocore.config import Config
-from commands import run_postgres
+from django import create_django
+from postgres import create_database
 
-database_region =  Config(region_name="us-east-1")
-database_resource = boto3.resource("ec2", config=database_region)
+run_postgres = '''
+#!/bin/bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib -y
+sudo -i -u postgres bash << EOF
+createuser -s cloud -W
+cloud
+createdb -O cloud tasks
+echo "listen_addresses = '*'" >>  /etc/postgresql/12/main/postgresql.conf
+echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/12/main/pg_hba.conf
+EOF
+sudo ufw allow 5432/tcp
+sudo systemctl restart postgresql
+'''
 
-database_instance = database_resource.create_instances(
-    ImageId="ami-0279c3b3186e54acd",
-    MinCount=1,
-    MaxCount=1,
-    InstanceType="t2.micro",
-    UserData=run_postgres
-)
+run_django='''
+#!/bin/bash
+sudo apt update
+git clone https://github.com/raulikeda/tasks.git
+cd tasks
+sudo sed -i 's/node1/{public_ip_postgres}/g' portfolio/settings.py
+./install.sh
+sudo reboot
+'''
+
+postgres_instance = create_database("us-east-2", run_postgres)
+# django_instance = create_django("us-east-1", run_django)
