@@ -3,31 +3,20 @@ import os
 from botocore.config import Config
 from django import create_django
 from postgres import create_database
+from security_groups.django import create_django_security_group
+from security_groups.postgres import create_database_security_group
 
-run_postgres = '''
-#!/bin/bash
-sudo apt update
-sudo apt install postgresql postgresql-contrib -y
-sudo -i -u postgres bash << EOF
-createuser -s cloud -W
-cloud
-createdb -O cloud tasks
-echo "listen_addresses = '*'" >>  /etc/postgresql/12/main/postgresql.conf
-echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/12/main/pg_hba.conf
-EOF
-sudo ufw allow 5432/tcp
-sudo systemctl restart postgresql
-'''
+#us-east-1
+AMI_ID_NORTH_VIRGINIA_ID="ami-0279c3b3186e54acd"
 
-run_django='''
-#!/bin/bash
-sudo apt update
-git clone https://github.com/raulikeda/tasks.git
-cd tasks
-sudo sed -i 's/node1/{public_ip_postgres}/g' portfolio/settings.py
-./install.sh
-sudo reboot
-'''
+#us-east-2
+AMI_ID_OHIO_ID="ami-020db2c14939a8efb"
 
-postgres_instance = create_database("us-east-2", run_postgres)
-# django_instance = create_django("us-east-1", run_django)
+# creating database and its security-group
+postgres_security_group = create_database_security_group("us-east-1")
+postgres_instance = create_database("us-east-1", AMI_ID_NORTH_VIRGINIA_ID, postgres_security_group)
+POSTGRES_IP = postgres_instance[0].public_ip_address
+
+# creating django and its security-group
+django_security_group = create_django_security_group("us-east-1")
+django_instance = create_django("us-east-1", AMI_ID_NORTH_VIRGINIA_ID, POSTGRES_IP, django_security_group)
