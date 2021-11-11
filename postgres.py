@@ -4,22 +4,11 @@ from botocore.config import Config
 #Specify us-east-2 Ohio
 
 def create_database(region, machine_id, security_group):
-  run_postgres = '''
-  #!/bin/bash
-  sudo apt update
-  sudo apt install postgresql postgresql-contrib -y
-  sudo -i -u postgres bash << EOF
-  createuser -s cloud -W
-  cloud
-  createdb -O cloud tasks
-  echo "listen_addresses = '*'" >>  /etc/postgresql/12/main/postgresql.conf
-  echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/12/main/pg_hba.conf
-  EOF
-  sudo ufw allow 5432/tcp
-  sudo systemctl restart postgresql
-  '''
-
   try:
+
+    with open("django.sh", "r") as f:
+      run_postgres = f.read()
+
     database_region = Config(region_name=region)
     database_resource = boto3.resource("ec2", config=database_region)
 
@@ -48,6 +37,7 @@ def create_database(region, machine_id, security_group):
     print("")
     print("Creating Database Instance...")
     database_instance[0].wait_until_running()
+    database_instance[0].reload()
 
     print("")
     print("Database Created!")

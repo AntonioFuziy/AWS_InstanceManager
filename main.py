@@ -13,8 +13,8 @@ AMI_ID_NORTH_VIRGINIA_ID="ami-0279c3b3186e54acd"
 AMI_ID_OHIO_ID="ami-020db2c14939a8efb"
 
 # creating database and its security-group
-postgres_security_group = create_database_security_group("us-east-1")
-postgres_instance = create_database("us-east-1", AMI_ID_NORTH_VIRGINIA_ID, postgres_security_group)
+postgres_security_group = create_database_security_group("us-east-2")
+postgres_instance = create_database("us-east-2", AMI_ID_OHIO_ID, postgres_security_group)
 POSTGRES_IP = postgres_instance[0].public_ip_address
 
 # creating django and its security-group

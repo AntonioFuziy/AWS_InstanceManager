@@ -9,3 +9,8 @@ for user in iam.list_users()["Users"]:
     print(user["UserId"])
     print(user["Arn"])
     print(user["CreateDate"])
+
+with open("django.sh", "r") as f:
+    run_postgres = f.read()
+    db_ip = "192.168.0.0"
+print(run_postgres.replace("s/node1/postgres_ip/g", f"s/node1/{db_ip}/g", 1))

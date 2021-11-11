@@ -4,16 +4,11 @@ from botocore.config import Config
 #Specify us-east-1 North Virginia
 
 def create_django(region, machine_id ,public_ip_postgres, security_group):
-  run_django=f'''
-  #!/bin/bash
-  sudo apt update
-  git clone https://github.com/raulikeda/tasks.git
-  cd tasks
-  sudo sed -i 's/node1/{public_ip_postgres}/g' portfolio/settings.py
-  ./install.sh
-  sudo reboot
-  '''
   try:
+    with open("django.sh", "r") as f:
+      django_file = f.read()
+      run_django = django_file.replace("s/node1/postgres_ip/g", f"s/node1/{public_ip_postgres}/g", 1)
+
     django_region = Config(region_name=region)
     django_resource = boto3.resource("ec2", config=django_region)
 
@@ -42,6 +37,7 @@ def create_django(region, machine_id ,public_ip_postgres, security_group):
     print("")
     print("Creating Django Instance...")
     django_instance[0].wait_until_running()
+    django_instance[0].reload()
 
     print("")
     print("Djando Server Created!")
