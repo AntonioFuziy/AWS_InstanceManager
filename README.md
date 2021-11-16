@@ -2,7 +2,7 @@
 
 ## First of all you need to install the aws CLI
 
-![Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+<a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">Install AWS CLI</a>
 
 ## Then you need to configure with you AWS account
 
@@ -16,7 +16,7 @@ aws configure
 
 ## To manage your instances you need to install `boto3` with the following tutorial
 
-![Boto3 Installation](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#installation)
+<a href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#installation">Boto3 Installation</a>
 
 ## Using boto3
 
