@@ -21,7 +21,8 @@ def create_database_security_group(region):
                 },
             ],
         )
-        print("")
+        print("")    
+        print("====================================")
         print("Postgres security-group created")
 
         security_group_database.authorize_ingress(
@@ -39,13 +40,13 @@ def create_database_security_group(region):
         )
 
         security_group_database.load()
-
-        print("")
-        print("PORTS RUNNING")
+        print("POSTGRES PORTS RUNNING")
 
         return security_group_database
     except Exception as e:
-        print(e)
         print("")
+        print("============================================")
         print("MAYBE THIS SECURITY-GROUP IS ALREADY CREATED")
+        print("============================================")
+        print(e)
         return False

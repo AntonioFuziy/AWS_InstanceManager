@@ -22,6 +22,7 @@ def create_django_security_group(region):
             ],
         )
         print("")
+        print("====================================")
         print("Django security-group created")
 
         security_group_django.authorize_ingress(
@@ -39,13 +40,13 @@ def create_django_security_group(region):
         )
 
         security_group_django.load()
-
-        print("")
-        print("PORTS RUNNING")
+        print("DJANGO PORTS RUNNING")
 
         return security_group_django
     except Exception as e:
-        print(e)
         print("")
+        print("============================================")
         print("MAYBE THIS SECURITY-GROUP IS ALREADY CREATED")
+        print("============================================")
+        print(e)
         return False

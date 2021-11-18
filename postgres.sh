@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /
 sudo apt update && sudo apt install postgresql postgresql-contrib -y
 sudo -i -u postgres bash << EOF
 createuser -s cloud -W

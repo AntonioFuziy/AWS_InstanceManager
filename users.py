@@ -1,16 +1,24 @@
 #this command is used to check if you are authenticated to aws
 
-import boto3
-iam = boto3.client("iam")
+import boto3 
+from botocore.config import Config
+from pprint import pprint
 
-for user in iam.list_users()["Users"]:
-    print("")
-    print(user["UserName"])
-    print(user["UserId"])
-    print(user["Arn"])
-    print(user["CreateDate"])
+# north = Config(region_name="us-east-2")
+ec2_r2 = boto3.client('ec2', region_name="us-east-2")
 
-with open("django.sh", "r") as f:
-    run_postgres = f.read()
-    db_ip = "192.168.0.0"
-print(run_postgres.replace("s/node1/postgres_ip/g", f"s/node1/{db_ip}/g", 1))
+delete_instances_ids = []
+existing_instances = ec2_r2.describe_instances()
+existing_instances = existing_instances["Reservations"]
+for instance in existing_instances:
+    for i in instance["Instances"]:
+        print(i["State"]["Name"])
+        if i["State"]["Name"]  == "running":
+            for tag in i["Tags"]:
+                if tag["Value"] == "postgres":
+                    print(i["InstanceId"])
+
+
+# existing_security_groups = ec2_r2.describe_security_groups()
+# for security_group in existing_security_groups["SecurityGroups"]:
+#     print(security_group["GroupId"])

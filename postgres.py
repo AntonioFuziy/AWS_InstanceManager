@@ -6,7 +6,7 @@ from botocore.config import Config
 def create_database(region, machine_id, security_group):
   try:
 
-    with open("django.sh", "r") as f:
+    with open("postgres.sh", "r") as f:
       run_postgres = f.read()
 
     database_region = Config(region_name=region)
@@ -35,13 +35,17 @@ def create_database(region, machine_id, security_group):
       UserData=run_postgres
     )
     print("")
+    print("====================================")
     print("Creating Database Instance...")
     database_instance[0].wait_until_running()
     database_instance[0].reload()
-
-    print("")
     print("Database Created!")
-    return database_instance
+
+    return database_instance, database_instance[0].public_ip_address
   except Exception as e:
+    print("")
+    print("====================================")
+    print("ERROR")
+    print("====================================")
     print(e)
     return False
