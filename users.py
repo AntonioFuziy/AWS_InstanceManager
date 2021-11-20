@@ -4,6 +4,8 @@ import boto3
 from botocore.config import Config
 from pprint import pprint
 
+from utils import print_successes
+
 # north = Config(region_name="us-east-2")
 ec2_r2 = boto3.client('ec2', region_name="us-east-1")
 existing_images = ec2_r2.describe_images(Owners=["self"])

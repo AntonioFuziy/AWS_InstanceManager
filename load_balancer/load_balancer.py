@@ -1,4 +1,5 @@
 from subnets.subnets import get_subnets
+from utils import print_errors, print_successes, print_warnings, print_lines
 
 def create_loadbalancer(ec2_north_virginia, ec2_load_balancer, security_group, waiter):
   try:
@@ -22,19 +23,19 @@ def create_loadbalancer(ec2_north_virginia, ec2_load_balancer, security_group, w
       if balancer["LoadBalancerName"] == "load-balancer":
         load_balancer_arn = balancer["LoadBalancerArn"]
 
-    print("")
-    print("====================================")
-    print("Creating LOAD BALANCER...")
+    print_lines("")
+    print_lines("====================================")
+    print_lines("Creating LOAD BALANCER...")
 
     waiter.wait(LoadBalancerArns=[load_balancer_arn])
-    print("LOAD BALANCER Created!")
+    print_successes("LOAD BALANCER Created!")
 
-    return load_balancer
+    return load_balancer, load_balancer_arn
   except Exception as e:
-    print("")
-    print("====================================")
-    print("ERROR")
-    print("====================================")
+    print_lines("")
+    print_errors("====================================")
+    print_errors("ERROR")
+    print_errors("====================================")
     print(e)
     return False
 
@@ -45,22 +46,23 @@ def delete_loadbalancer(ec2_load_balancer, waiter):
       for balancer in load_balancer['LoadBalancers']:
         if balancer["LoadBalancerName"] == "load-balancer":
           ec2_load_balancer.delete_load_balancer(LoadBalancerArn=balancer["LoadBalancerArn"])
-          print("")
-          print("====================================")
-          print("Deleting LOAD BALANCER...")
+          print_lines("")
+          print_lines("====================================")
+          print_lines("Deleting LOAD BALANCER...")
           
           waiter.wait(LoadBalancerArns=[balancer["LoadBalancerArn"]])
-          print("LOAD BALANCER Deleted!")
+          print_successes("LOAD BALANCER Deleted!")
+          # return balancer["LoadBalancerArn"]
 
     else:
-      print("")
-      print("====================================")
-      print("No LOAD BALANCERS available")
+      print_lines("")
+      print_warnings("====================================")
+      print_warnings("No LOAD BALANCERS available")
       return
   except Exception as e:
-    print("")
-    print("====================================")
-    print("ERROR")
-    print("====================================")
+    print_lines("")
+    print_errors("====================================")
+    print_errors("ERROR")
+    print_errors("====================================")
     print(e)
     return False

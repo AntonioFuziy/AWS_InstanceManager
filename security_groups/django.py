@@ -1,5 +1,6 @@
 import boto3
 from botocore.config import Config
+from utils import print_errors, print_successes, print_lines
 
 def create_django_security_group(region):
     try:
@@ -22,8 +23,8 @@ def create_django_security_group(region):
             ],
         )
         print("")
-        print("====================================")
-        print("Django security-group created")
+        print_successes("====================================")
+        print_successes("Django security-group created")
 
         security_group_django.authorize_ingress(
             CidrIp="0.0.0.0/0",
@@ -40,13 +41,13 @@ def create_django_security_group(region):
         )
 
         security_group_django.load()
-        print("DJANGO PORTS RUNNING")
+        print_successes("DJANGO PORTS RUNNING")
 
         return security_group_django
     except Exception as e:
         print("")
-        print("============================================")
-        print("MAYBE THIS SECURITY-GROUP IS ALREADY CREATED")
-        print("============================================")
+        print_errors("============================================")
+        print_errors("MAYBE THIS SECURITY-GROUP IS ALREADY CREATED")
+        print_errors("============================================")
         print(e)
         return False

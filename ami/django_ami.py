@@ -1,3 +1,6 @@
+from utils import print_errors, print_successes, print_lines
+
+
 def create_django_AMI(ec2, DJANGO_INSTANCE_ID, waiter):
   try:
     ami_instance = ec2.create_image(
@@ -17,17 +20,17 @@ def create_django_AMI(ec2, DJANGO_INSTANCE_ID, waiter):
       ]
     )
 
-    print("")
-    print("====================================")
-    print("Creating Django AMI...")
+    print_lines("")
+    print_lines("====================================")
+    print_lines("Creating Django AMI...")
     waiter.wait(ImageIds=[ami_instance['ImageId']])
-    print("Djando AMI Created!")
+    print_successes("Djando AMI Created!")
 
     return ami_instance, ami_instance['ImageId']
   except Exception as e:
-    print("")
-    print("====================================")
-    print("ERROR")
-    print("====================================")
+    print_lines("")
+    print_errors("====================================")
+    print_errors("ERROR")
+    print_errors("====================================")
     print(e)
     return False

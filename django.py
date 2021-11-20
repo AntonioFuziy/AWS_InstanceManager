@@ -1,6 +1,8 @@
 import boto3
 from botocore.config import Config
 
+from utils import print_errors, print_successes, print_lines
+
 #Specify us-east-1 North Virginia
 
 def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
@@ -34,12 +36,12 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
       ],
       UserData=run_django
     )    
-    print("")
-    print("====================================")
-    print("Creating Django Instance...")
+    print_lines("")
+    print_lines("====================================")
+    print_lines("Creating Django Instance...")
     django_instance[0].wait_until_running()
     django_instance[0].reload()
-    print("Djando Server Created!")
+    print_successes("Djando Server Created!")
 
     all_north_virginia_instances = ec2.describe_instances()
     instances = all_north_virginia_instances["Reservations"]
@@ -49,13 +51,13 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
           for tag in i["Tags"]:
             if tag["Value"] == "django":
               DJANGO_INSTANCE_ID = i["InstanceId"]
-              print(f"DJANGO_ID: {DJANGO_INSTANCE_ID}")
+              print_successes(f"DJANGO_ID: {DJANGO_INSTANCE_ID}")
 
     return django_instance, DJANGO_INSTANCE_ID, django_instance[0].public_ip_address
   except Exception as e:
-    print("")
-    print("====================================")
-    print("ERROR")
-    print("====================================")
+    print_lines("")
+    print_errors("====================================")
+    print_errors("ERROR")
+    print_errors("====================================")
     print(e)
     return False

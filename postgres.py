@@ -1,6 +1,8 @@
 import boto3
 from botocore.config import Config
 
+from utils import print_errors, print_successes, print_lines
+
 #Specify us-east-2 Ohio
 
 def create_database(region, machine_id, security_group):
@@ -34,18 +36,18 @@ def create_database(region, machine_id, security_group):
       ],
       UserData=run_postgres
     )
-    print("")
-    print("====================================")
-    print("Creating Database Instance...")
+    print_lines("")
+    print_lines("====================================")
+    print_lines("Creating Database Instance...")
     database_instance[0].wait_until_running()
     database_instance[0].reload()
-    print("Database Created!")
+    print_successes("Database Created!")
 
     return database_instance, database_instance[0].public_ip_address
   except Exception as e:
-    print("")
-    print("====================================")
-    print("ERROR")
-    print("====================================")
+    print_lines("")
+    print_errors("====================================")
+    print_errors("ERROR")
+    print_errors("====================================")
     print(e)
     return False

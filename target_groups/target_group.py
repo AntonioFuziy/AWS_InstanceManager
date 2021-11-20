@@ -1,11 +1,14 @@
+
+from utils import print_errors, print_successes, print_warnings, print_lines
+
 def create_target_groups(ec2_north_virginia, ec2_load_balancer):
   try:
     target_groups = ec2_north_virginia.describe_vpcs()
     vpc_id = target_groups["Vpcs"][0]["VpcId"]
 
-    print("")
-    print("====================================")
-    print("Creating TARGET GROUP...")
+    print_lines("")
+    print_lines("====================================")
+    print_lines("Creating TARGET GROUP...")
 
     ec2_load_balancer.create_target_group(
       Name="instance-manager-target",
@@ -19,17 +22,17 @@ def create_target_groups(ec2_north_virginia, ec2_load_balancer):
       Names=["instance-manager-target"]
     )
 
-    print("")
-    print("====================================")
-    print("TARGET GROUP created")
+    print_lines("")
+    print_successes("====================================")
+    print_successes("TARGET GROUP created")
 
     return new_target_group["TargetGroups"][0]["TargetGroupArn"]
 
   except Exception as e:
-    print("")
-    print("====================================")
-    print("ERROR:")
-    print("====================================")
+    print_lines("")
+    print_errors("====================================")
+    print_errors("ERROR:")
+    print_errors("====================================")
     print(e)
     return False
 
@@ -40,20 +43,20 @@ def delete_target_groups(ec2_load_balancer):
       for target_group in target_groups["TargetGroups"]:
         if target_group["TargetGroupName"] == "instance-manager-target":
           ec2_load_balancer.delete_target_group(TargetGroupArn=target_group["TargetGroupArn"])
-          print("")
-          print("====================================")
-          print("Deleting TARGET GROUP...")
+          print_lines("")
+          print_successes("====================================")
+          print_successes("Target Group deleted")
 
     else:
-      print("")
-      print("====================================")
-      print("No Target Groups Available")
+      print_lines("")
+      print_warnings("====================================")
+      print_warnings("No Target Groups Available")
       return
 
   except Exception as e:
-    print("")
-    print("====================================")
-    print("ERROR:")
-    print("====================================")
+    print_lines("")
+    print_errors("====================================")
+    print_errors("ERROR:")
+    print_errors("====================================")
     print(e)
     return False
