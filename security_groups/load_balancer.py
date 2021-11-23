@@ -28,8 +28,8 @@ def create_load_balancer_security_group(region):
         
         security_group_load_balancer.authorize_ingress(
             CidrIp="0.0.0.0/0",
-            FromPort=80,
-            ToPort=80,
+            FromPort=8080,
+            ToPort=8080,
             IpProtocol="tcp"
         )
 

@@ -15,8 +15,6 @@ def create_auto_scalling(ec2_auto_scalling, ec2_north_virginia, target_group_arn
       LaunchConfigurationName="ami_launched",
       MinSize=1,
       MaxSize=3,
-      DesiredCapacity=1,
-      DefaultCooldown=100,
       TargetGroupARNs=[target_group_arns],
       AvailabilityZones=list_all_zones
     )

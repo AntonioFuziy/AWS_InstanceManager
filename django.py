@@ -6,10 +6,22 @@ from utils import print_errors, print_successes, print_lines
 #Specify us-east-1 North Virginia
 
 def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
+  django_script="""
+  #cloud-config
+
+  runcmd:
+  - cd /home/ubuntu 
+  - sudo apt update -y
+  - git clone https://github.com/raulikeda/tasks.git
+  - cd tasks
+  - sed -i "s/node1/POSTGRES_IP/g" ./portfolio/settings.py
+  - ./install.sh
+  - sudo ufw allow 8080/tcp -y
+  - sudo reboot
+  """
+
   try:
-    with open("django.sh", "r") as f:
-      django_file = f.read()
-      run_django = django_file.replace("s/node1/postgres_ip/g", f"s/node1/{PUBLIC_POSTGRES_IP}/g", 1)
+    django_script = django_script.replace("POSTGRES_IP", str(PUBLIC_POSTGRES_IP))
 
     django_region = Config(region_name=region)
     django_resource = boto3.resource("ec2", config=django_region)
@@ -34,7 +46,7 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
           ]
         }
       ],
-      UserData=run_django
+      UserData=django_script
     )    
     print_lines("")
     print_lines("====================================")

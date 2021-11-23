@@ -6,11 +6,23 @@ from utils import print_errors, print_successes, print_lines
 #Specify us-east-2 Ohio
 
 def create_database(region, machine_id, security_group):
+  postgres_script="""
+  #cloud-config
+
+  runcmd:
+  - cd /
+  - sudo apt update
+  - sudo apt install postgresql postgresql-contrib -y
+  - sudo su - postgres
+  - sudo -u postgres psql -c "CREATE USER cloud WITH PASSWORD 'cloud';"
+  - sudo -u postgres psql -c "CREATE DATABASE tasks;"
+  - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE tasks TO cloud;"
+  - sudo echo "listen_addresses = '*'" >> /etc/postgresql/10/main/postgresql.conf
+  - sudo echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/10/main/pg_hba.conf
+  - sudo ufw allow 5432/tcp -y
+  - sudo systemctl restart postgresql
+  """
   try:
-
-    with open("postgres.sh", "r") as f:
-      run_postgres = f.read()
-
     database_region = Config(region_name=region)
     database_resource = boto3.resource("ec2", config=database_region)
 
@@ -34,7 +46,7 @@ def create_database(region, machine_id, security_group):
           ]
         }
       ],
-      UserData=run_postgres
+      UserData=postgres_script
     )
     print_lines("")
     print_lines("====================================")

@@ -6,12 +6,13 @@ def launch_ami(ec2, image_id, security_group):
     print_lines("====================================")
     print_lines("Launching AMI...")
     ec2.create_launch_configuration(
-      LaunchConfigurationName='ami_launched',
+      LaunchConfigurationName="ami_launched",
       ImageId=image_id,
       SecurityGroups=[
         security_group.group_id
       ],
-      InstanceType='t2.micro'
+      InstanceType='t2.micro',
+      KeyName="antonio.fuziy"
     )
     print_successes("AMI Launched")
   except Exception as e:

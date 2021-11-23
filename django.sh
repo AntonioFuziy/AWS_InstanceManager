@@ -1,5 +1,5 @@
 #!/bin/bash
-cd home/ubuntu/
+cd /home/ubuntu
 sudo apt update -y
 git clone https://github.com/raulikeda/tasks.git
 cd tasks

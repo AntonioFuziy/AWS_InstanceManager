@@ -10,23 +10,32 @@ def create_target_groups(ec2_north_virginia, ec2_load_balancer):
     print_lines("====================================")
     print_lines("Creating TARGET GROUP...")
 
-    ec2_load_balancer.create_target_group(
+    target_group_created = ec2_load_balancer.create_target_group(
       Name="instance-manager-target",
       Protocol="HTTP",
       Port=8080,
+      HealthCheckEnabled=True,
+      HealthCheckProtocol='HTTP',
+      HealthCheckPort='8080',
+      HealthCheckPath='/tasks/',
+      Matcher={
+        'HttpCode': '200,302',
+      },
       TargetType="instance",
       VpcId=vpc_id
     )
 
-    new_target_group = ec2_load_balancer.describe_target_groups(
-      Names=["instance-manager-target"]
-    )
+    # new_target_group = ec2_load_balancer.describe_target_groups(
+    #   Names=["instance-manager-target"]
+    # )
+
+    new_target_group = target_group_created["TargetGroups"][0]["TargetGroupArn"]
 
     print_lines("")
     print_successes("====================================")
     print_successes("TARGET GROUP created")
 
-    return new_target_group["TargetGroups"][0]["TargetGroupArn"]
+    return new_target_group
 
   except Exception as e:
     print_lines("")

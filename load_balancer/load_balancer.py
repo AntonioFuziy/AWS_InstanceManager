@@ -19,9 +19,11 @@ def create_loadbalancer(ec2_north_virginia, ec2_load_balancer, security_group, w
       Subnets=subnets
     )
 
-    for balancer in load_balancer['LoadBalancers']:
-      if balancer["LoadBalancerName"] == "load-balancer":
-        load_balancer_arn = balancer["LoadBalancerArn"]
+    load_balancer_arn = load_balancer['LoadBalancers'][0]['LoadBalancerArn']
+
+    # for balancer in load_balancer['LoadBalancers']:
+    #   if balancer["LoadBalancerName"] == "load-balancer":
+    #     load_balancer_arn = balancer["LoadBalancerArn"]
 
     print_lines("")
     print_lines("====================================")

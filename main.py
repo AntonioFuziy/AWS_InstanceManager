@@ -13,6 +13,39 @@ from security_groups.postgres import create_database_security_group
 from target_groups.target_group import create_target_groups, delete_target_groups
 from utils import delete_all_images, delete_all_instances, delete_all_security_groups
 
+# bash scripts
+postgres_script="""
+#cloud-config
+
+runcmd:
+- cd /
+- sudo apt update
+- sudo apt install postgresql postgresql-contrib -y
+- sudo su - postgres
+- sudo -u postgres psql -c "CREATE USER cloud WITH PASSWORD 'cloud';"
+- sudo -u postgres psql -c "CREATE DATABASE tasks;"
+- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE tasks TO cloud;"
+- sudo echo "listen_addresses = '*'" >> /etc/postgresql/10/main/postgresql.conf
+- sudo echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/10/main/pg_hba.conf
+- sudo ufw allow 5432/tcp -y
+- sudo systemctl restart postgresql
+"""
+
+django_script="""
+#cloud-config
+
+runcmd:
+- cd /home/ubuntu 
+- sudo apt update -y
+- git clone https://github.com/raulikeda/tasks.git
+- cd tasks
+- sed -i "s/node1/POSTGRES_IP/g" ./portfolio/settings.py
+- ./install.sh
+- sudo ufw allow 8080/tcp -y
+- sudo reboot
+"""
+
+
 # AWS regions
 NORTH_VIRGINIA_REGION = "us-east-1"
 OHIO_REGION = "us-east-2"
@@ -33,16 +66,13 @@ ec2_north_virginia_region = boto3.client('ec2', region_name=NORTH_VIRGINIA_REGIO
 ec2_load_balancer = boto3.client('elbv2', region_name=NORTH_VIRGINIA_REGION)
 ec2_auto_scalling = boto3.client('autoscaling', region_name=NORTH_VIRGINIA_REGION)
 
-# deleting auto scalling
-delete_auto_scalling(ec2_auto_scalling)
-
 # deleting all load balancers
 WAITER_CREATE_LOAD_BALANCER = ec2_load_balancer.get_waiter('load_balancer_available')
 WAITER_DELETE_LOAD_BALANCER = ec2_load_balancer.get_waiter('load_balancers_deleted')
 delete_loadbalancer(ec2_load_balancer, WAITER_DELETE_LOAD_BALANCER)
 
-# deleting target groups
-delete_target_groups(ec2_load_balancer)
+# deleting auto scalling
+delete_auto_scalling(ec2_auto_scalling)
 
 # deleting launched image
 delete_launch_ami(ec2_auto_scalling)
@@ -55,16 +85,19 @@ delete_all_images(
 )
 
 # deleting all instances
-WAITER_NORTH_VIRIGINIA_INSTANCE = ec2_north_virginia_region.get_waiter('instance_terminated')
+WAITER_NORTH_VIRGINIA_INSTANCE = ec2_north_virginia_region.get_waiter('instance_terminated')
 WAITER_OHIO_INSTANCE = ec2_ohio_region.get_waiter('instance_terminated')
 delete_all_instances(
   ec2_north_virginia_region, 
-  WAITER_NORTH_VIRIGINIA_INSTANCE
+  WAITER_NORTH_VIRGINIA_INSTANCE
 )
 delete_all_instances(
   ec2_ohio_region, 
   WAITER_OHIO_INSTANCE
 )
+
+# deleting target groups
+delete_target_groups(ec2_load_balancer)
 
 # deleting all security-groups
 delete_all_security_groups(
@@ -114,7 +147,7 @@ if DJANGO_AMI_ID:
 # delete django instance after AMI creation
 delete_all_instances(
   ec2_north_virginia_region, 
-  WAITER_NORTH_VIRIGINIA_INSTANCE
+  WAITER_NORTH_VIRGINIA_INSTANCE
 )
 
 # creating target group
