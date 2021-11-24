@@ -1,7 +1,12 @@
 import boto3
 from botocore.config import Config
+import time
+import logging
 
 from utils import print_errors, print_successes, print_lines
+
+# def log_generator():
+#   logging.basicConfig(filename='log.txt', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 #Specify us-east-1 North Virginia
 
@@ -12,12 +17,21 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
   runcmd:
   - cd /home/ubuntu 
   - sudo apt update -y
-  - git clone https://github.com/raulikeda/tasks.git
+  - echo "APT UPDATE" >> /home/ubuntu/log.txt
+  - git clone https://github.com/raulikeda/tasks
+  - echo "GIT CLONE raulikeda/tasks" >> /home/ubuntu/log.txt
   - cd tasks
+  - echo "Entra em tasks" >> /home/ubuntu/log.txt
   - sed -i "s/node1/POSTGRES_IP/g" ./portfolio/settings.py
+  - echo "CHANGING POSTGRES_IP" >> /home/ubuntu/log.txt
   - ./install.sh
+  - echo "==========================================================" >> /home/ubuntu/log.txt
+  - echo "RUNNING INSTALL" >> /home/ubuntu/log.txt
+  - echo "==========================================================" >> /home/ubuntu/log.txt
   - sudo ufw allow 8080/tcp -y
+  - echo "UFW 8080" >> /home/ubuntu/log.txt
   - sudo reboot
+  - echo "REBOOTING" >> /home/ubuntu/log.txt
   """
 
   try:
@@ -53,6 +67,13 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
     print_lines("Creating Django Instance...")
     django_instance[0].wait_until_running()
     django_instance[0].reload()
+    waiting_time = 90
+    waited_time = 0
+    print_lines("Waiting for django to be ready...")
+    while waited_time < waiting_time:
+      print_lines("Waited for " + str(waited_time) + " seconds...")
+      waited_time += 1
+      time.sleep(1)
     print_successes("Djando Server Created!")
 
     all_north_virginia_instances = ec2.describe_instances()

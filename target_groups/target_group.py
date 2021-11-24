@@ -17,9 +17,9 @@ def create_target_groups(ec2_north_virginia, ec2_load_balancer):
       HealthCheckEnabled=True,
       HealthCheckProtocol='HTTP',
       HealthCheckPort='8080',
-      HealthCheckPath='/tasks/',
+      HealthCheckPath='/admin/',
       Matcher={
-        'HttpCode': '200,302',
+        'HttpCode': '200,302,301,404,403',
       },
       TargetType="instance",
       VpcId=vpc_id

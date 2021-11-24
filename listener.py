@@ -8,7 +8,7 @@ def create_listener(ec2, target_group_arn, load_balancer_arn):
     ec2.create_listener(
       LoadBalancerArn=load_balancer_arn,
       Protocol='HTTP',
-      Port=8080,
+      Port=80,
       DefaultActions=[
         {
           'Type': 'forward',
