@@ -18,8 +18,8 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
   - cd /home/ubuntu 
   - sudo apt update -y
   - echo "APT UPDATE" >> /home/ubuntu/log.txt
-  - git clone https://github.com/raulikeda/tasks
-  - echo "GIT CLONE raulikeda/tasks" >> /home/ubuntu/log.txt
+  - git clone https://github.com/AntonioFuziy/tasks
+  - echo "GIT CLONE AntonioFuziy/tasks" >> /home/ubuntu/log.txt
   - cd tasks
   - echo "Entra em tasks" >> /home/ubuntu/log.txt
   - sed -i "s/node1/POSTGRES_IP/g" ./portfolio/settings.py
@@ -67,7 +67,7 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
     print_lines("Creating Django Instance...")
     django_instance[0].wait_until_running()
     django_instance[0].reload()
-    waiting_time = 90
+    waiting_time = 100
     waited_time = 0
     print_lines("Waiting for django to be ready...")
     while waited_time < waiting_time:

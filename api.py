@@ -2,6 +2,7 @@ import requests
 
 def get_tasks(url):
   response = requests.get(url)
+  print(response)
   return response.json()
 
 def post_task(url, title, date, description):
@@ -13,6 +14,7 @@ def post_task(url, title, date, description):
       "description": description
     }
   )
+  print(response)
   return response.json()
 
 method = input("Digite o método [GET ou POST]: ")
@@ -32,6 +34,3 @@ if method == "POST":
   date = f"{ano}-{mes}-{dia}T{hora}:{minuto}"
   description = input("Digite a descrição: ")
   print(post_task(url, title, date, description))
-
-else:
-  print("Método inválido")
