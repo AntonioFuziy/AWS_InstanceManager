@@ -1,14 +1,9 @@
 import boto3
 from botocore.config import Config
 import time
-import logging
 
 from utils import print_errors, print_successes, print_lines
-
-# def log_generator():
-#   logging.basicConfig(filename='log.txt', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-
-#Specify us-east-1 North Virginia
+from log import logging
 
 def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
   django_script="""
@@ -65,6 +60,7 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
     print_lines("")
     print_lines("====================================")
     print_lines("Creating Django Instance...")
+    logging.info("Creating Django Instance...")
     django_instance[0].wait_until_running()
     django_instance[0].reload()
     waiting_time = 100
@@ -75,6 +71,7 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
       waited_time += 1
       time.sleep(1)
     print_successes("Djando Server Created!")
+    logging.info("Django Created...")
 
     all_north_virginia_instances = ec2.describe_instances()
     instances = all_north_virginia_instances["Reservations"]
@@ -92,5 +89,6 @@ def create_django(region, machine_id ,PUBLIC_POSTGRES_IP, security_group, ec2):
     print_errors("====================================")
     print_errors("ERROR")
     print_errors("====================================")
+    logging.error(e)
     print(e)
     return False

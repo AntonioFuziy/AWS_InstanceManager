@@ -1,4 +1,4 @@
-
+from log import logging
 from colorama import Fore
 
 def print_successes(text):
@@ -30,18 +30,22 @@ def delete_all_instances(ec2, waiter):
       print_lines("")
       print_lines("====================================================")
       print_lines("Waiting for the delete process from all INSTANCES...")
+      logging.info("Deleting instance...")
       waiter.wait(InstanceIds=delete_instances_ids)
       print_successes("Instance deleted")
+      logging.info("Instance deleted")
     else:
       print_lines("")
       print_warnings("====================================")
       print_warnings("No instances to delete")
+      logging.warning("No instances to delete")
       return
   except Exception as e:
     print_lines("")
     print_errors("====================================")
     print_errors("ERROR")
     print_errors("====================================")
+    logging.error(e)
     print(e)
 
 def delete_all_security_groups(ec2, security_group_names):
@@ -52,13 +56,16 @@ def delete_all_security_groups(ec2, security_group_names):
         print_lines("")
         print_lines("==========================================================")
         print_lines("Waiting for the delete process from all SECURITY GROUPS...")
+        logging.info("Deleting security-group...")
         ec2.delete_security_group(GroupId=security_group["GroupId"])
         print_successes("Security Group deleted")
+        logging.info("Security-Group deleted")
   except Exception as e:
     print_lines("")
     print_errors("====================================")
     print_errors("ERROR")
     print_errors("====================================")
+    logging.error(e)
     print(e)
 
 def delete_all_images(ec2, AMIs):
@@ -70,16 +77,20 @@ def delete_all_images(ec2, AMIs):
           print_lines("")
           print_lines("===============================================")
           print_lines("Waiting for the delete process from all AMIs...")
+          logging.info("Deleting AMI...")
           ec2.deregister_image(ImageId=image["ImageId"])
           print_successes("AMIs deleted")
+          logging.info("AMI deleted")
     else:
       print_lines("")
       print_warnings("====================================")
       print_warnings("No AMIs existing")
+      logging.warning("No AMIs to delete")
       return
   except Exception as e:
     print_lines("")
     print_errors("====================================")
     print_errors("ERROR")
     print_errors("====================================")
+    logging.error(e)
     print(e)

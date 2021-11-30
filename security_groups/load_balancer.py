@@ -1,6 +1,7 @@
 import boto3
 from botocore.config import Config
 from utils import print_errors, print_successes, print_lines
+from log import logging
 
 def create_load_balancer_security_group(region):
     try:
@@ -25,6 +26,7 @@ def create_load_balancer_security_group(region):
         print("")
         print_successes("====================================")
         print_successes("load balancer security-group created")
+        logging.info("Load Balancer security-group created")
         
         security_group_load_balancer.authorize_ingress(
             CidrIp="0.0.0.0/0",
@@ -32,9 +34,11 @@ def create_load_balancer_security_group(region):
             ToPort=80,
             IpProtocol="tcp"
         )
+        logging.info("Load Balancer port 80 enabled")
 
         security_group_load_balancer.load()
         print_successes("LOAD BALANCER PORTS RUNNING")
+        logging.info("Load Balancer ports running")
 
         return security_group_load_balancer
     except Exception as e:
@@ -42,5 +46,6 @@ def create_load_balancer_security_group(region):
         print_errors("============================================")
         print_errors("MAYBE THIS SECURITY-GROUP IS ALREADY CREATED")
         print_errors("============================================")
+        logging.error(e)
         print(e)
         return False

@@ -4,47 +4,15 @@ from django import create_django
 from ami.django_ami import create_django_AMI
 from ami.launch_image import delete_launch_ami, launch_ami
 from auto_scaling.auto_scalling_group import create_auto_scalling, delete_auto_scalling
-from listener import create_listener, delete_listeners
 from load_balancer.load_balancer import create_loadbalancer, delete_loadbalancer
 from postgres import create_database
+from listener import create_listener
+from load_balancer.attach_load_balancer import attach_load_balancer
 from security_groups.django import create_django_security_group
 from security_groups.load_balancer import create_load_balancer_security_group
 from security_groups.postgres import create_database_security_group
 from target_groups.target_group import create_target_groups, delete_target_groups
 from utils import delete_all_images, delete_all_instances, delete_all_security_groups
-
-# bash scripts
-postgres_script="""
-#cloud-config
-
-runcmd:
-- cd /
-- sudo apt update
-- sudo apt install postgresql postgresql-contrib -y
-- sudo su - postgres
-- sudo -u postgres psql -c "CREATE USER cloud WITH PASSWORD 'cloud';"
-- sudo -u postgres psql -c "CREATE DATABASE tasks;"
-- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE tasks TO cloud;"
-- sudo echo "listen_addresses = '*'" >> /etc/postgresql/10/main/postgresql.conf
-- sudo echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/10/main/pg_hba.conf
-- sudo ufw allow 5432/tcp -y
-- sudo systemctl restart postgresql
-"""
-
-django_script="""
-#cloud-config
-
-runcmd:
-- cd /home/ubuntu 
-- sudo apt update -y
-- git clone https://github.com/raulikeda/tasks.git
-- cd tasks
-- sed -i "s/node1/POSTGRES_IP/g" ./portfolio/settings.py
-- ./install.sh
-- sudo ufw allow 8080/tcp -y
-- sudo reboot
-"""
-
 
 # AWS regions
 NORTH_VIRGINIA_REGION = "us-east-1"
@@ -179,11 +147,8 @@ create_auto_scalling(
   TARGET_GROUP_ARN
 )
 
-# # delete listener
-# delete_listeners(
-#   ec2_load_balancer, 
-#   load_balancer_arn
-# )
+# attaching load balancer to target group
+attach_load_balancer(ec2_auto_scalling, TARGET_GROUP_ARN)
 
 # creating listener
 create_listener(

@@ -1,6 +1,7 @@
 import boto3
 from botocore.config import Config
 from utils import print_errors, print_successes, print_lines
+from log import logging
 
 def create_database_security_group(region):
     try:
@@ -25,6 +26,7 @@ def create_database_security_group(region):
         print("")    
         print_successes("====================================")
         print_successes("Postgres security-group created")
+        logging.info("Postgres security-group created")
 
         security_group_database.authorize_ingress(
             CidrIp="0.0.0.0/0",
@@ -32,6 +34,7 @@ def create_database_security_group(region):
             ToPort=22,
             IpProtocol="tcp"
         )
+        logging.info("Postgres port 22 enabled")
         
         security_group_database.authorize_ingress(
             CidrIp="0.0.0.0/0",
@@ -39,9 +42,11 @@ def create_database_security_group(region):
             ToPort=5432,
             IpProtocol="tcp"
         )
+        logging.info("Postgres port 5432 enabled")
 
         security_group_database.load()
         print_successes("POSTGRES PORTS RUNNING")
+        logging.info("Postgres ports running")
 
         return security_group_database
     except Exception as e:
@@ -49,5 +54,6 @@ def create_database_security_group(region):
         print_errors("============================================")
         print_errors("MAYBE THIS SECURITY-GROUP IS ALREADY CREATED")
         print_errors("============================================")
+        logging.error(e)
         print(e)
         return False
