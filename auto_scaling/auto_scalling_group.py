@@ -1,4 +1,4 @@
-from utils import print_errors, print_successes, print_lines
+from utils import print_errors, print_successes, print_lines, print_warnings
 from log import logging
 
 def create_auto_scalling(ec2_auto_scalling, ec2_north_virginia, target_group_arns):
@@ -47,7 +47,7 @@ def delete_auto_scalling(ec2):
 
   except:
     print_lines("")
-    print_errors("====================================")
-    print_errors("Auto Scalling Group not found")
-    print_errors("====================================")
+    print_warnings("====================================")
+    print_warnings("Auto Scalling Group not found")
+    print_warnings("====================================")
     logging.warning("Auto Scalling Group not found")

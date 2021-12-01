@@ -1,4 +1,4 @@
-from utils import print_errors, print_successes, print_lines
+from utils import print_errors, print_successes, print_lines, print_warnings
 from log import logging
 
 def launch_ami(ec2, image_id, security_group):
@@ -43,7 +43,7 @@ def delete_launch_ami(ec2):
     
   except:
     print_lines("")
-    print_errors("====================================")
-    print_errors("Launch Configuration not found")
-    print_errors("====================================")
+    print_warnings("====================================")
+    print_warnings("Launch Configuration not found")
+    print_warnings("====================================")
     logging.warning("Launch Configuration not found")

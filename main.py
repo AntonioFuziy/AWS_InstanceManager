@@ -4,6 +4,7 @@ from django import create_django
 from ami.django_ami import create_django_AMI
 from ami.launch_image import delete_launch_ami, launch_ami
 from auto_scaling.auto_scalling_group import create_auto_scalling, delete_auto_scalling
+from auto_scaling.auto_scalling_policy import create_auto_scalling_policy
 from load_balancer.load_balancer import create_loadbalancer, delete_loadbalancer
 from postgres import create_database
 from listener import create_listener
@@ -126,7 +127,7 @@ TARGET_GROUP_ARN = create_target_groups(
 
 # creating load_balancer
 LOAD_BALANCER_SECURITY_GROUP = create_load_balancer_security_group(NORTH_VIRGINIA_REGION)
-load_balancer, load_balancer_arn = create_loadbalancer(
+load_balancer, LOAD_BALANCER_ARN = create_loadbalancer(
   ec2_north_virginia_region, 
   ec2_load_balancer, 
   LOAD_BALANCER_SECURITY_GROUP, 
@@ -154,5 +155,8 @@ attach_load_balancer(ec2_auto_scalling, TARGET_GROUP_ARN)
 create_listener(
   ec2_load_balancer, 
   TARGET_GROUP_ARN, 
-  load_balancer_arn
+  LOAD_BALANCER_ARN
 )
+
+#creating policy
+create_auto_scalling_policy(ec2_auto_scalling, TARGET_GROUP_ARN, LOAD_BALANCER_ARN)
