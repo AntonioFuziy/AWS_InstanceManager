@@ -26,15 +26,12 @@ ec2_north_virginia_region = boto3.client('ec2', region_name=NORTH_VIRGINIA_REGIO
 ec2_load_balancer = boto3.client('elbv2', region_name=NORTH_VIRGINIA_REGION)
 ec2_auto_scalling = boto3.client('autoscaling', region_name=NORTH_VIRGINIA_REGION)
 
-# deleting auto scalling
-delete_auto_scalling(ec2_auto_scalling)
-
 # deleting all load balancers
 WAITER_DELETE_LOAD_BALANCER = ec2_load_balancer.get_waiter('load_balancers_deleted')
 delete_loadbalancer(ec2_load_balancer, WAITER_DELETE_LOAD_BALANCER)
 
-# deleting target groups
-delete_target_groups(ec2_load_balancer)
+# deleting auto scalling
+delete_auto_scalling(ec2_auto_scalling)
 
 # deleting launched image
 delete_launch_ami(ec2_auto_scalling)
@@ -47,6 +44,9 @@ WAITER_NORTH_VIRIGINIA_INSTANCE = ec2_north_virginia_region.get_waiter('instance
 WAITER_OHIO_INSTANCE = ec2_ohio_region.get_waiter('instance_terminated')
 delete_all_instances(ec2_north_virginia_region, WAITER_NORTH_VIRIGINIA_INSTANCE)
 delete_all_instances(ec2_ohio_region, WAITER_OHIO_INSTANCE)
+
+# deleting target groups
+delete_target_groups(ec2_load_balancer)
 
 # deleting all security groups
 delete_all_security_groups(ec2_north_virginia_region, SECURITY_GROUP_NAMES)
